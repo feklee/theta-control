@@ -1,0 +1,275 @@
+@charset "IBM437";
+/* line 17, C:/Ruby200-x64/lib/ruby/gems/2.0.0/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+/* line 22, C:/Ruby200-x64/lib/ruby/gems/2.0.0/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+html {
+  line-height: 1;
+}
+
+/* line 24, C:/Ruby200-x64/lib/ruby/gems/2.0.0/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+ol, ul {
+  list-style: none;
+}
+
+/* line 26, C:/Ruby200-x64/lib/ruby/gems/2.0.0/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/* line 28, C:/Ruby200-x64/lib/ruby/gems/2.0.0/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+/* line 30, C:/Ruby200-x64/lib/ruby/gems/2.0.0/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q, blockquote {
+  quotes: none;
+}
+/* line 103, C:/Ruby200-x64/lib/ruby/gems/2.0.0/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+/* line 32, C:/Ruby200-x64/lib/ruby/gems/2.0.0/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+a img {
+  border: none;
+}
+
+/* line 116, C:/Ruby200-x64/lib/ruby/gems/2.0.0/gems/compass-0.12.6/frameworks/compass/stylesheets/compass/reset/_utilities.scss */
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
+  display: block;
+}
+
+@font-face {
+  font-family: "Roboto Condensed";
+  src: url('fonts/../../vendor/Roboto-Condensed/RobotoCondensed-Regular.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: "Roboto Condensed";
+  src: url('fonts/');
+  src: url('fonts/?#iefix') format('embedded-opentype'), url('fonts/../../vendor/Roboto-Condensed/RobotoCondensed-Regular.ttf') format('truetype');
+  font-weight: "bold";
+}
+
+@font-face {
+  font-family: "FontAwesome";
+  src: url('fonts/../../vendor/font-awesome-4.1.0/fonts/fontawesome-webfont.woff') format('woff');
+}
+
+/* line 41, ../sass/index.scss */
+html {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+}
+
+/* line 45, ../sass/index.scss */
+body {
+  margin: 5px;
+  font-family: 'Roboto Condensed', sans-serif;
+  background: black;
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  min-width: 220px;
+}
+/* line 55, ../sass/index.scss */
+body::before {
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-size: 20px;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: block;
+  content: "";
+  z-index: -1;
+  -webkit-transition-property: opacity;
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  transition-property: opacity;
+  -webkit-transition-duration: 0.6s;
+  -moz-transition-duration: 0.6s;
+  -o-transition-duration: 0.6s;
+  transition-duration: 0.6s;
+}
+/* line 69, ../sass/index.scss */
+body.sufficiently-scrolled::before {
+  opacity: 0;
+}
+
+/* line 75, ../sass/index.scss */
+a:link {
+  color: red;
+  text-decoration: none;
+}
+
+/* line 81, ../sass/index.scss */
+.button, input, label {
+  cursor: pointer;
+}
+
+/* line 85, ../sass/index.scss */
+.capture.button {
+  position: relative;
+  width: calc(100% - 2px);
+  height: calc(100vh - 12px);
+  min-height: 200px;
+  padding: 0;
+  border: 1px solid white;
+  margin-bottom: 20px;
+}
+/* line 94, ../sass/index.scss */
+.capture.button > div {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 200px;
+  height: 200px;
+  margin-left: -100px;
+  margin-top: -100px;
+  text-align: center;
+  overflow: hidden;
+}
+/* line 107, ../sass/index.scss */
+.capture.button > div .function {
+  position: absolute;
+  top: 80px;
+  font-size: 30px;
+  line-height: 40px;
+  width: 100%;
+}
+/* line 115, ../sass/index.scss */
+.capture.button > div .status {
+  position: absolute;
+  line-height: 22px;
+  width: 100%;
+  white-space: nowrap;
+}
+/* line 122, ../sass/index.scss */
+.capture.button > div .status.summary {
+  top: 178px;
+}
+/* line 126, ../sass/index.scss */
+.capture.button > div .status.error {
+  color: red;
+}
+
+/* line 133, ../sass/index.scss */
+dt {
+  line-height: 40px;
+}
+
+/* line 137, ../sass/index.scss */
+dd {
+  margin-left: 20px;
+}
+
+/* line 141, ../sass/index.scss */
+dl.settings {
+  line-height: 22px;
+}
+/* line 146, ../sass/index.scss */
+dl.settings dd.exposures li {
+  display: inline-block;
+}
+/* line 150, ../sass/index.scss */
+dl.settings dd.exposures li input {
+  display: none;
+}
+/* line 154, ../sass/index.scss */
+dl.settings dd.exposures li label {
+  display: inline-block;
+  border: 1px solid white;
+  width: 35px;
+  overflow: hidden;
+  text-align: center;
+}
+/* line 162, ../sass/index.scss */
+dl.settings dd.exposures li:last-of-type label {
+  margin-right: 0;
+}
+/* line 166, ../sass/index.scss */
+dl.settings dd.exposures li input:checked ~ label {
+  color: black;
+  background: white;
+}
+/* line 171, ../sass/index.scss */
+dl.settings dd.exposures li.ev-0 label {
+  color: red;
+  border-color: red;
+}
+/* line 176, ../sass/index.scss */
+dl.settings dd.exposures li.ev-0 input:checked ~ label {
+  background: red;
+}
+/* line 182, ../sass/index.scss */
+dl.settings dt.intervalometer input {
+  display: none;
+}
+/* line 186, ../sass/index.scss */
+dl.settings dt.intervalometer label {
+  border: 1px solid white;
+  padding: 0 5px;
+}
+/* line 191, ../sass/index.scss */
+dl.settings dt.intervalometer input:checked ~ label {
+  color: black;
+  background: white;
+}
+/* line 197, ../sass/index.scss */
+dl.settings dd.intervalometer {
+  overflow: hidden;
+}
+/* line 200, ../sass/index.scss */
+dl.settings dd.intervalometer > div {
+  -webkit-transition-property: margin-top;
+  -moz-transition-property: margin-top;
+  -o-transition-property: margin-top;
+  transition-property: margin-top;
+  -webkit-transition-duration: 0.2s;
+  -moz-transition-duration: 0.2s;
+  -o-transition-duration: 0.2s;
+  transition-duration: 0.2s;
+  white-space: nowrap;
+  height: 24px;
+  margin-top: -24px;
+  line-height: 22px;
+}
+/* line 208, ../sass/index.scss */
+dl.settings dd.intervalometer > div input {
+  width: 50px;
+  background: transparent;
+  color: white;
+  padding: 0 1px;
+  margin: 0;
+  border: 1px solid white;
+  font: inherit;
+  border-radius: 0;
+}

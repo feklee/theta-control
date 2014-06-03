@@ -1,0 +1,102 @@
+<!doctype html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+
+    <link rel="stylesheet" href="stylesheets/index.css" />
+    <title>Theta Control</title>
+  </head>
+
+  <body>
+    <div class="capture button">
+      <div>
+        <p class="momentary status"></p>
+        <p class="function">
+          Capture
+        </p>
+        <p class="summary status"></p>
+      </div>
+    </div>
+
+    <dl class="settings">
+      <dt>Exposures</dt>
+      <dd class="exposures">
+        <ul>
+          <li>
+            <input type="checkbox" id="ev--2" value="-2000">
+            <label for="ev--2">-2</label>
+          </li>
+          <li>
+            <input type="checkbox" id="ev--1-7" value="-1700">
+            <label for="ev--1-7">-1.7</label>
+          </li>
+          <li>
+            <input type="checkbox" id="ev--1-3" value="-1300">
+            <label for="ev--1-3">-1.3</label>
+          </li>
+          <li>
+            <input type="checkbox" id="ev--1" value="-1000">
+            <label for="ev--1">-1</label>
+          </li>
+          <li>
+            <input type="checkbox" id="ev--0-7" value="-700">
+            <label for="ev--0-7">-0.7</label>
+          </li>
+          <li>
+            <input type="checkbox" id="ev--0-3" value="-300">
+            <label for="ev--0-3">-0.3</label>
+          </li>
+          <li class="ev-0">
+            <input type="checkbox" id="ev-0" value="0" checked>
+            <label for="ev-0">0</label>
+          </li>
+          <li>
+            <input type="checkbox" id="ev-0-3" value="300">
+            <label for="ev-0-3">+0.3</label>
+          </li>
+          <li>
+            <input type="checkbox" id="ev-0-7" value="700">
+            <label for="ev-0-7">+0.7</label>
+          </li>
+          <li>
+            <input type="checkbox" id="ev-1" value="1000">
+            <label for="ev-1">+1</label>
+          </li>
+          <li>
+            <input type="checkbox" id="ev-1-3" value="1300">
+            <label for="ev-1-3">+1.3</label>
+          </li>
+          <li>
+            <input type="checkbox" id="ev-1-7" value="1700">
+            <label for="ev-1-7">+1.7</label>
+          </li>
+          <li>
+            <input type="checkbox" id="ev-2" value="2000">
+            <label for="ev-2">+2</label>
+          </li>
+        </ul>
+      </dd>
+
+      <dt class="intervalometer">
+        <input type="checkbox" id="intervalometer" />
+        <label for="intervalometer">Intervalometer</label>
+      </dt>
+      <dd class="intervalometer">
+        <div>
+          <span>Delay (sec): </span>
+          <input type="number" min="5" max="300" value="5" />
+        </div>
+      </dd>
+
+      <dt>
+        Source code
+      </dt>
+      <dd>
+        Ask <a href="mailto:felix.klee@inka.de">Felix</a>.
+      </dd>
+    </dl>
+
+    <script data-main="scripts/main" src="vendor/require.js"></script>
+  </body>
+</html>

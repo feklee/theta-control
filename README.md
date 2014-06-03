@@ -1,4 +1,3 @@
-theta-control
-=============
+Work in Progress – not functional!
 
-To control the Ricoh Theta from Firefox OS
+– [Felix](mailto:felix.klee@inka.de)

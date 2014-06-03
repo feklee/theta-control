@@ -1,0 +1,19 @@
+{
+    "name": "Theta Control",
+    "description": "Remote control for Ricoh’s Theta camera",
+    "launch_path": "/index.html",
+    "icons": {
+        "128": "/images/icon-128.png"
+    },
+    "developer": {
+        "name": "Felix E. Klee",
+        "url": "https://github.com/feklee"
+    },
+    "default_locale": "en",
+    "type": "privileged",
+    "permissions" : {
+        "tcp-socket" : {
+            "description" : "Create TCP sockets and communicate over them."
+        }
+    }
+}
