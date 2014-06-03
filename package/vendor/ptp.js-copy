@@ -1,0 +1,356 @@
+;; EMACS settings
+
+((nil .
+      ((indent-tabs-mode . nil)
+       (tab-width . 4)
+       (js-indent-level . 4)
+       (js2-basic-offset . 4)
+       (fill-column . 80)
+       (c-syntactic-indentation . t)))
+ (javascript-mode
+  . ((c-syntactic-indentation . t))))
+// Generates blocks of data with functions for manipulation.
+//
+// Copyright 2014 Developers of ptp.js
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not
+// use this file except in compliance with the License. You may obtain a copy
+// of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+/*jslint browser: true, maxerr: 50, maxlen: 80 */
+
+/*global define, Uint8Array */
+
+define(function () {
+    'use strict';
+
+    var create, writeLittleEndian, appendDword, appendWord, writeDword;
+
+    writeLittleEndian = function (data, offs, value, nBytes) {
+        var i;
+        for (i = 0; i < nBytes; i += 1) {
+            /*jslint bitwise: true */
+            data[offs + i] = (value >> (8 * i)) & 0xff;
+            /*jslint bitwise: false */
+        }
+    };
+
+    appendDword = function (arr, value) {
+        writeLittleEndian(arr, arr.length, value, 4);
+    };
+
+    appendWord = function (arr, value) {
+        writeLittleEndian(arr, arr.length, value, 2);
+    };
+
+    writeDword = function (arr, offs, value) {
+        writeLittleEndian(arr, offs, value, 4);
+    };
+
+    create = function () {
+        var arr = [];
+
+        return Object.create(null, {
+            appendDword: {value: function (value) {
+                appendDword(arr, value);
+            }},
+
+            appendWord: {value: function (value) {
+                appendWord(arr, value);
+            }},
+
+            writeDword: {value: function (offs, value) {
+                writeDword(arr, offs, value);
+            }},
+
+            length: {get: function () {
+                return arr.length;
+            }},
+
+            buffer: {get: function () {
+                return (new Uint8Array(arr)).buffer;
+            }},
+
+            toString: {value: function () {
+                return arr.toString();
+            }}
+        });
+    };
+
+    return Object.create(null, {
+        create: {value: create}
+    });
+});
+Copyright (C) 2014 Developers of ptp.js
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+// Copyright 2014 Developers of ptp.js
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not
+// use this file except in compliance with the License. You may obtain a copy
+// of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+/*jslint browser: true, maxerr: 50, maxlen: 80 */
+
+/*global define */
+
+define(['./data-factory'], function (dataFactory) {
+    'use strict';
+
+    var types, cmdRequest, startDataPacket, writeHeader,
+        headerLength = 8, transactionId = 0;
+
+    types = {
+        cmdRequest: 6,
+        startDataPacket: 9
+    };
+
+    writeHeader = function (data, type) {
+        data.writeDword(0, data.length);
+        data.writeDword(4, type);
+    };
+
+    cmdRequest = function (commandCode, args) {
+        var data = dataFactory.create();
+
+        data.writeDword(headerLength, 1);
+        data.appendWord(commandCode);
+        data.appendDword(transactionId);
+
+        if (args !== undefined) {
+            args.forEach(function (arg) {
+                data.appendDword(arg);
+            });
+        }
+
+        writeHeader(data, types.cmdRequest);
+
+        return data;
+    };
+
+    startDataPacket = function (size) {
+        var data = dataFactory.create();
+
+        data.writeDword(headerLength, transactionId);
+        data.appendDword(size);
+        data.appendDword(0);
+
+        writeHeader(data, types.cmdRequest);
+
+        return data;
+    };
+
+    return Object.create(null, {
+        cmdRequest: {value: cmdRequest},
+        startDataPacket: {value: startDataPacket},
+        startNewTransaction: {value: function () { transactionId += 1; }}
+    });
+});
+
+// TODO: remove?
+// Copyright 2014 Developers of ptp.js
+//
+// Licensed under the Apache License, Version 2.0 (the "License"); you may not
+// use this file except in compliance with the License. You may obtain a copy
+// of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+// License for the specific language governing permissions and limitations
+// under the License.
+
+/*jslint browser: true, maxerr: 50, maxlen: 80 */
+
+/*global define, Uint8Array */
+
+define(['./packet', './data-factory'], function (packet, dataFactory) {
+    'use strict';
+
+    var send, capture, socket, setExposureBiasCompensation,
+        connect, connectIfNecessary, onNoConnection,
+        ip = '127.0.0.1',
+        port = 15740,
+        cmdRequest, packCommand,
+        operationCodes, eventCodes, devicePropertyCodes;
+
+    operationCodes = {
+        openSession: 0x1002,
+        closeSession: 0x1003,
+        initiateCapture: 0x100E,
+        setDevicePropValue: 0x1016
+    };
+
+    eventCodes = {
+        objectAdded: 0x4002,
+        captureComplete: 0x400D
+    };
+
+    devicePropertyCodes = {
+        exposureBiasCompensation: 0x5010
+    };
+
+    onNoConnection = function () { return; };
+
+    connect = function (onConnected) {
+        if (!navigator.mozTCPSocket) {
+            onNoConnection();
+            return;
+        }
+
+        socket = navigator.mozTCPSocket.open(ip, port, {
+            binaryType: 'arraybuffer'
+        });
+
+        socket.onopen = function () {
+            var sessionId = 1; // TODO: retrieve from init ack
+
+            // Init
+            send([28, 0, 0, 0, 1, 0, 0, 0, 255, 255, 255, 255, 255,
+                  255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+                  255, 1, 0, 0, 0]);
+
+            // Open
+            send([22, 0, 0, 0, 6, 0, 0, 0, 1, 0, 0, 0,
+                  2, 16, 0, 0, 0, 0, 1, 0, 0, 0]);
+
+            onConnected();
+        };
+
+        socket.onerror = onNoConnection;
+        socket.onclose = onNoConnection;
+    };
+
+    connectIfNecessary = function (onConnected) {
+        if (socket === undefined || socket.readyState !== 'open') {
+            connect(onConnected);
+        } else {
+            onConnected();
+        }
+    };
+
+    send = function (data) {
+        socket.send((data instanceof Array) ?
+                    new Uint8Array(data).buffer :
+                    data.buffer);
+    };
+
+    capture = function () {
+        packet.startNewTransaction();
+        send(packet.cmdRequest(operationCodes.initiateCapture, [0, 0]));
+    };
+
+    // `shift` is in stops, scaled by a factor of 1000.
+    setExposureBiasCompensation = function (shift) {
+        return;
+
+        packet.startNewTransaction();
+        console.log(packet.cmdRequest(operationCodes.setDevicePropValue).
+                    toString());
+        console.log(packet.startDataPacket(2).toString());
+        return;
+
+        /*jslint bitwise: true */
+        var sendCommand = [22, 0, 0, 0, 6, 0, 0, 0, 1, 0, 0, 0, 22, 16,
+                           0, 0, 0, 0, 16, 80, 0, 0],
+            startDataPacket = [20, 0, 0, 0,
+                               9, 0, 0, 0,
+                               0, 0, 0, 0,
+                               2, 0, 0, 0,
+                               0, 0, 0, 0],
+            data = [14, 0, 0, 0,
+                    12, 0, 0, 0,
+                    0, 0, 0, 0,
+                    shift & 0xff, (shift >> 8) & 0xff];
+
+        writeDword(sendCommand, 14, transactionId);
+        writeDword(startDataPacket, 8, transactionId);
+        writeDword(data, 8, transactionId);
+
+        send(sendCommand);
+        send(startDataPacket);
+        send(data);
+        /*jslint bitwise: false */
+    };
+
+    return Object.create(null, {
+        connectIfNecessary: {value: connectIfNecessary},
+        capture: {value: capture},
+        setExposureBiasCompensation: {value: setExposureBiasCompensation},
+        onNoConnection: {set: function (x) {
+            onNoConnection = x;
+        }},
+        ip: {set: function (x) {
+            ip = x;
+        }},
+        port: {set: function (x) {
+            port = x;
+        }}
+    });
+});
+Introduction
+============
+
+*ptp.js* is a JavaScript library providing *limited* functionality for
+controlling cameras via [PTP][1]/IP: *Picture Transfer Protocol* via an
+IP-based network
+
+
+Disclaimer
+==========
+
+At the moment, this library is just a quick hack by [Felix][3] written for
+remote controlling a [Ricoh Theta][2]. The initial version basically offers the
+same functionality as `ThetaShutterProc.c`, a set of C functions part of
+[ThetaShutter_PQIAirPen002.zip][6] and published by [MobileHackerz][4] under
+the [WTPFL][5].
+
+
+Requirements
+============
+
+  * [RequireJS][7]
+
+  * [TCPSocket API][8], available on Firefox OS 1.x via `navigator.mozTCPSocket`
+
+
+Reading
+=======
+
+  * 2000-07-05 PTP specification: [pima15740-2000.pdf][9]
+
+  * gPhoto PTP/IP documentation: [www.gphoto.org/doc/ptpip.php][10]
+
+[1]: http://en.wikipedia.org/wiki/Picture_Transfer_Protocol
+[2]: http://en.wikipedia.org/wiki/Ricoh
+[3]: mailto:felix.klee@inka.de
+[4]: http://mobilehackerz.jp/contents/Review/RICOH_THETA
+[5]: http://www.wtfpl.net/txt/copying/
+[6]: http://mobilehackerz.jp/contents?plugin=attach&pcmd=info&file=ThetaShutter_PQIAirPen002.zip&refer=Review%2FRICOH_THETA%2FRemote
+[7]: http://requirejs.org/
+[8]: https://developer.mozilla.org/en-US/docs/WebAPI/TCP_Socket
+[9]: http://people.ece.cornell.edu/land/courses/ece4760/FinalProjects/f2012/jmv87/site/files/pima15740-2000.pdf
+[10]: http://www.gphoto.org/doc/ptpip.php
+
