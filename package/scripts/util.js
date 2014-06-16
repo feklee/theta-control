@@ -1,19 +1,3 @@
-// Utility functionality.
-//
-// Copyright 2014 Felix E. Klee <felix.klee@inka.de>
-//
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not
-// use this file except in compliance with the License. You may obtain a copy
-// of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
-
 /*jslint browser: true, maxerr: 50, maxlen: 80 */
 
 /*global define */
@@ -42,15 +26,18 @@ define(function () {
                 documentIsComplete());
     };
 
-    // Counts down from `p.from` ms to zero calling `p.onCount` for every
-    // count, and in the end: `p.onZero`. Once the `p.interrupt` function
-    // returns false, then the countdown stops.
-    countdown = function (p, startTime) {
+    // Counts down from `settings.from` ms to zero calling `settings.onCount`
+    // for every count, and in the end: `settings.onZero`. Once the
+    // `settings.interruptRequested` function returns true, then the countdown
+    // stops, calling `settings.onInterrupt`.
+    countdown = function (settings, startTime) {
         var increment = 100, // ms
-            elapsedTime,
-            currentTime = new Date().getTime();
+            elapsedTime, // ms
+            currentTime = new Date().getTime(); // ms
 
-        if (p.interrupt()) {
+        if (settings.interruptRequested()) {
+            settings.onCount(0);
+            settings.onInterrupt();
             return;
         }
 
@@ -60,17 +47,29 @@ define(function () {
 
         elapsedTime = currentTime - startTime;
 
-        if (elapsedTime > p.from) {
-            p.onZero();
+        if (elapsedTime >= settings.from) {
+            settings.onCount(0);
+            settings.onZero();
         } else {
-            p.onCount(p.from - elapsedTime);
+            settings.onCount(settings.from - elapsedTime);
             setTimeout(function () {
-                countdown(p, startTime);
+                countdown(settings, startTime);
             }, increment);
         }
     };
 
     return Object.create(null, {
+        // Runs `onDocumentIsComplete` once document has loaded (incl.
+        // sub-resources).
+        onceDocumentIsComplete: {value: function (onDocumentIsComplete) {
+            if (document.readyState === 'interactive' ||
+                    document.readyState === 'complete') {
+                onDocumentIsComplete();
+            } else {
+                window.addEventListener('load', onDocumentIsComplete, false);
+            }
+        }},
+
         // Runs `onDocumentIsInteractive` once document is finished parsing but
         // still loading sub-resources.
         onceDocumentIsInteractive: {value: function (onDocumentIsInteractive) {
@@ -87,17 +86,6 @@ define(function () {
             }
         }},
 
-        // Runs `onDocumentIsComplete` once document has loaded (incl.
-        // sub-resources).
-        onceDocumentIsComplete: {value: function (onDocumentIsComplete) {
-            if (document.readyState === 'interactive' ||
-                    document.readyState === 'complete') {
-                onDocumentIsComplete();
-            } else {
-                window.addEventListener('load', onDocumentIsComplete, false);
-            }
-        }},
-
         clear: {value: function (el) {
             while (el.firstChild) {
                 el.removeChild(el.firstChild);
@@ -110,6 +98,10 @@ define(function () {
             return [rect.left, rect.top];
         }},
 
-        countdown: {value: countdown}
+        countdown: {value: countdown},
+
+        nop: {value: function () {
+            return;
+        }}
     });
 });

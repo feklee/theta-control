@@ -1,9 +1,11 @@
 {
     "name": "Theta Control",
     "description": "Remote control for Ricoh’s Theta camera",
-    "launch_path": "/index.html",
+    "launch_path": "/app.html",
     "icons": {
-        "128": "/images/icon-128.png"
+        "60": "/images/icon-60.png",
+        "128": "/images/icon-128.png",
+        "256": "/images/icon-256.png"
     },
     "developer": {
         "name": "Felix E. Klee",

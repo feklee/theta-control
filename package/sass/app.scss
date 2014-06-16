@@ -1,22 +1,5 @@
-/* Home page styling.
-
-// Copyright 2014 Felix E. Klee <felix.klee@inka.de>
-//
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not
-// use this file except in compliance with the License. You may obtain a copy
-// of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
-
-*/
-
 @import "compass/reset";
+@import "compass/reset/utilities";
 @import "compass/css3/font-face";
 @import "compass/css3";
 @import "compass/css3/user-interface";
@@ -40,6 +23,10 @@ $slow: 0.6s;
 
 html {
     @include user-select("none");
+}
+
+a, input {
+    @include reset-focus;
 }
 
 body {
@@ -72,7 +59,7 @@ body {
 }
 
 a {
-    &:link {
+    &, &:link {
         color: red;
         text-decoration: none;
     }
@@ -80,6 +67,14 @@ a {
 
 .button, input, label {
     cursor: pointer;
+}
+
+.disabled {
+    cursor: default;
+}
+
+@keyframes spin {
+    to { transform: rotate(1turn); }
 }
 
 .capture.button {
@@ -104,7 +99,7 @@ a {
         text-align: center;
         overflow: hidden;
 
-        & .function {
+        & .label {
             position: absolute;
             top: 80px;
             font-size: 30px;
@@ -128,6 +123,25 @@ a {
             }
         }
     }
+
+    &.disabled > div {
+        & .label {
+            display: none;
+        }
+
+        &::after {
+            position: absolute;
+            top: 80px;
+            font-size: 40px;
+            line-height: 40px;
+            width: 100%;
+            font-family: FontAwesome;
+            font-weight: normal;
+            display: block;
+            content: ""; // Spinner
+            animation: spin 1s infinite steps(8);
+        }
+    }
 }
 
 dt {
@@ -138,11 +152,11 @@ dd {
     margin-left: 20px;
 }
 
-dl.settings {
+dl {
     $line-height: 22px;
     line-height: $line-height;
 
-    dd.exposures {
+    dd.exposure-settings {
         & li {
             display: inline-block;
         }
@@ -178,7 +192,7 @@ dl.settings {
         }
     }
 
-    dt.intervalometer {
+    dt.intervalometer-settings {
         & input {
             display: none;
         }
@@ -194,7 +208,7 @@ dl.settings {
         }
     }
 
-    dd.intervalometer {
+    dd.intervalometer-settings {
         overflow: hidden;
 
         & > div {
@@ -215,6 +229,86 @@ dl.settings {
                 font: inherit;
                 border-radius: 0;
             }
+        }
+    }
+
+    dd.battery-meter {
+        div {
+            display: inline-block;
+            width: 20px;
+            height: 10px;
+            border: 1px solid white;
+        }
+
+        &.low {
+            div:first-child {
+                background: red;
+            }
+        }
+
+        &.medium {
+            div:first-child {
+                &, & + div {
+                    background: white;
+                }
+            }
+        }
+
+        &.high {
+            div:first-child {
+                &, & + div, & + div + div {
+                    background: white;
+                }
+            }
+        }
+    }
+
+    dd.volume-settings {
+        line-height: 12px;
+
+        $width: 200px;
+        $height: 10px;
+        $border-width: 1px;
+
+        div, input {
+            width: $width;
+            height: $height;
+        }
+
+        div {
+            border: $border-width solid black;
+            background: white;
+            margin-bottom: -($height + 2 * $border-width);
+        }
+
+        input {
+            vertical-align: bottom;
+            line-height: 12px;
+            margin: 0;
+            padding: 0;
+            border: $border-width solid white;
+            border-radius: 0;
+            background: transparent;
+
+            &::-moz-range-track {
+                visibility: hidden;
+            }
+
+            &::-moz-range-thumb {
+                height: 100%;
+                width: 0;
+                background: white;
+                border-radius: 0;
+                border: none;
+            }
+        }
+    }
+
+    dd.source-link {
+        a::before {
+            font-family: FontAwesome;
+            font-weight: normal;
+            content: " "; // link icon
         }
     }
 }

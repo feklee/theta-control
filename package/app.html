@@ -4,24 +4,22 @@
   <head>
     <meta charset="utf-8" />
 
-    <link rel="stylesheet" href="stylesheets/index.css" />
+    <link rel="stylesheet" href="stylesheets/app.css" />
     <title>Theta Control</title>
   </head>
 
   <body>
-    <div class="capture button">
+    <div class="disabled capture button">
       <div>
         <p class="momentary status"></p>
-        <p class="function">
-          Capture
-        </p>
+        <p class="label"></p>
         <p class="summary status"></p>
       </div>
     </div>
 
-    <dl class="settings">
+    <dl>
       <dt>Exposures</dt>
-      <dd class="exposures">
+      <dd class="exposure-settings">
         <ul>
           <li>
             <input type="checkbox" id="ev--2" value="-2000">
@@ -78,25 +76,43 @@
         </ul>
       </dd>
 
-      <dt class="intervalometer">
+      <dt class="intervalometer-settings">
         <input type="checkbox" id="intervalometer" />
         <label for="intervalometer">Intervalometer</label>
       </dt>
-      <dd class="intervalometer">
+      <dd class="intervalometer-settings">
         <div>
           <span>Delay (sec): </span>
-          <input type="number" min="5" max="300" value="5" />
+          <input type="number" min="0" max="300" value="10" />
         </div>
+      </dd>
+
+      <dt>
+        Shutter volume
+      </dt>
+      <dd class="volume-settings">
+        <div class="indicator"></div>
+        <input type="range" value="100" />
+      </dd>
+
+      <dt>
+        Battery level
+      </dt>
+      <dd class="battery-meter">
+        <div></div>
+        <div></div>
+        <div></div>
       </dd>
 
       <dt>
         Source code
       </dt>
-      <dd>
-        Ask <a href="mailto:felix.klee@inka.de">Felix</a>.
+      <dd class="source-link">
+        <a href="https://github.com/feklee/theta-control">github.com</a>
       </dd>
     </dl>
 
-    <script data-main="scripts/main" src="vendor/require.js"></script>
+    <script src="vendor/require.js"></script>
+    <script src="scripts/require-config.js"></script>
   </body>
 </html>

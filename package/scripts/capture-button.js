@@ -1,36 +1,43 @@
-// Copyright 2014 Felix E. Klee <felix.klee@inka.de>
-//
-// Licensed under the Apache License, Version 2.0 (the "License"); you may not
-// use this file except in compliance with the License. You may obtain a copy
-// of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
-// WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
-// License for the specific language governing permissions and limitations
-// under the License.
-
 /*jslint browser: true, maxerr: 50, maxlen: 80 */
 
 /*global define */
 
-define(['util', 'capture'], function (util, capture) {
+define([
+    'util', 'capture-loop', 'intervalometer-settings', 'connection',
+    'battery-meter'
+], function (util, captureLoop, intervalometerSettings, connection,
+             batteryMeter) {
     'use strict';
 
-    var setStatus, setFunction, start, onStopped;
+    var setStatus, start, onStopRequested, onStopped, onCaptureStarted,
+        onCount, setMomentaryStatus, setSummaryStatus, formattedSeconds,
+        onCaptureFinished, onIntervalometerSettingsChanged,
+        formattedExposure, updateEnabledState,
+        isDisabled = false,
+        onClicked,
+        type,
+        labels,
+        disable,
+        enable,
+        setType;
+
+    labels = { // by type
+        start: 'Capture',
+        stop: 'Stop'
+    };
+
+    formattedSeconds = function (x) {
+        return x.toFixed(1);
+    };
+
+    formattedExposure = function (shift) {
+        return ('EV' +
+                (shift >= 0 ? '+' : '') +
+                (shift / 1000).toFixed(shift % 1000 === 0 ? 0 : 1));
+    };
 
     setStatus = function (status) {
         var statusEl;
-
-        if (typeof status === 'string') {
-            status = {msg: status, isError: false};
-        }
-
-        if (status.type === undefined) {
-            status.type = 'momentary';
-        }
 
         statusEl = document.querySelector('.capture.button ' +
                                           '.' + status.type +
@@ -43,36 +50,120 @@ define(['util', 'capture'], function (util, capture) {
         statusEl.innerHTML = status.msg;
     };
 
+    setMomentaryStatus = function (msg) {
+        setStatus({type: 'momentary', msg: msg});
+    };
+
+    setSummaryStatus = function (msg) {
+        setStatus({type: 'summary', msg: msg});
+    };
+
+    updateEnabledState = function () {
+        if (intervalometerSettings.isEnabled) {
+            if (captureLoop.isRunning && captureLoop.stopRequested) {
+                disable();
+            } else {
+                enable();
+            }
+        } else {
+            if (captureLoop.capturingLastBracketingShot) {
+                // almost done, no stop button needed
+                disable();
+            } else {
+                enable();
+            }
+        }
+    };
+
     start = function () {
-        setFunction('stop');
-        capture.start();
+        setType('stop');
+        setMomentaryStatus('');
+        captureLoop.requestStart();
+    };
+
+    onStopRequested = function () {
+        disable(); // no interaction until stopped
     };
 
     onStopped = function () {
-        setFunction('start');
+        setType('start');
+        updateEnabledState();
     };
 
-    setFunction = function (type) {
-        var text, onClick;
+    onClicked = function () {
+        if (isDisabled || !connection.isConnected) {
+            return;
+        }
 
         switch (type) {
         case 'start':
-            text = 'Capture';
-            onClick = start;
+            start();
             break;
         case 'stop':
-            text = 'Stop';
-            onClick = capture.stop;
+            captureLoop.requestStop();
             break;
         }
-
-        document.querySelector('.capture.button').onclick = onClick;
-        document.querySelector('.capture.button .function').textContent = text;
     };
 
+    disable = function () {
+        isDisabled = true;
+        document.querySelector('.capture.button').classList.add('disabled');
+    };
+
+    enable = function () {
+        isDisabled = false;
+        document.querySelector('.capture.button').classList.remove('disabled');
+    };
+
+    setType = function (x) {
+        type = x;
+        document.querySelector('.capture.button .label').textContent =
+            labels[type];
+    };
+
+    onCaptureStarted = function (settings) {
+        setMomentaryStatus('Capturing: ' + formattedExposure(settings.shift));
+        updateEnabledState();
+    };
+
+    onCaptureFinished = function () {
+        setMomentaryStatus('');
+        setSummaryStatus('Exposures: ' + captureLoop.numberOfShots);
+    };
+
+    connection.onNoConnection = function () {
+        setStatus({
+            type: 'momentary',
+            msg: 'No connection to Theta',
+            isError: true
+        });
+        captureLoop.requestStop();
+    };
+
+    connection.onConnected = function () {
+        setMomentaryStatus(''); // clears potential no connection error
+    };
+
+    onCount = function (remainingTime) {
+        setMomentaryStatus(remainingTime === 0 ?
+                           '' :
+                           formattedSeconds(remainingTime / 1000));
+    };
+
+    onIntervalometerSettingsChanged = function () {
+        updateEnabledState();
+    };
+
+    intervalometerSettings.onChanged = onIntervalometerSettingsChanged;
+    captureLoop.onStopRequested = onStopRequested;
+    captureLoop.onStopped = onStopped;
+    captureLoop.onCaptureStarted = onCaptureStarted;
+    captureLoop.onCaptureFinished = onCaptureFinished;
+    captureLoop.onCount = onCount;
+
     util.onceDocumentIsInteractive(function () {
-        capture.setStatus = setStatus;
-        capture.onStopped = onStopped;
-        setFunction('start');
+        document.querySelector('.capture.button').onclick = onClicked;
+        setType('start');
+        updateEnabledState();
     });
 });
