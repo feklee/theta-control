@@ -5,7 +5,7 @@
 define(['util'], function (util) {
     'use strict';
 
-    var getVolume, getInputEl, updateIndicator, // TODO: use consistent names
+    var getVolume, getInputEl, updateIndicator,
         maxWidth; // px
 
     getInputEl = function () {
