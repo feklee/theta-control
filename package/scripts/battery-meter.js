@@ -27,8 +27,6 @@ define(['ptp.js/ptp'], function (ptp) {
     // Note: The battery meter update process and a capture should not run
     // simultaneously, since the Theta has problems processing concurrent
     // PTP/IP commands.
-    //
-    // With firmware version 1.30, the camera sometimes doesn't respond.
     update = function (settings) {
         ptp.getDeviceProperty({
             code: ptp.devicePropCodes.batteryLevel,
