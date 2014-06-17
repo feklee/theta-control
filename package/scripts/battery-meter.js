@@ -25,8 +25,9 @@ define(['ptp.js/ptp'], function (ptp) {
     };
 
     // Note: The battery meter update process and a capture should not run
-    // simultaneously, since the Theta has problems processing concurrent
-    // PTP/IP commands.
+    // simultaneously, since the Theta seems to have problems processing
+    // concurrent PTP/IP commands. (After the latest update of ptp.js, this
+    // assertion could be re-evaluated.)
     update = function (settings) {
         ptp.getDeviceProperty({
             code: ptp.devicePropCodes.batteryLevel,

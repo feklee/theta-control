@@ -1,0 +1,10 @@
+{
+    "name": "create-zipped-package",
+    "version": "1.0.0",
+    "author": "Felix E. Klee <felix.klee@inka.de>",
+    "dependencies": {
+        "archiver": ">=0.10.0",
+        "requirejs": "2.1.x",
+        "tmp": ">=0.0.23"
+    }
+}

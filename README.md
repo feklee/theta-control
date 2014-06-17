@@ -13,7 +13,7 @@ Requirements
 
   * [Compass][1]: The CSS is compiled from SCSS.
 
-  * [ptp.js][3]: JavaScript PTP/IP library
+  * [ptp.js][3]: JavaScript PTP/IP library in version 1.0.0 or compatible
 
 Notes
 -----
