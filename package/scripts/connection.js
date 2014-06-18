@@ -3,40 +3,43 @@
 /*global define */
 
 define([
-    'util', 'battery-meter-loop', 'ptp.js/ptp'
-], function (util, batteryMeterLoop, ptp) {
+    'util', 'battery-meter', 'ptp.js/ptp'
+], function (util, batteryMeter, ptp) {
     'use strict';
 
     var maintainConnection, onNoConnection = util.nop,
         onConnected = util.nop, isConnected = false, isConnecting = false,
         onConnectFailure, onConnectSuccess, connectStage1, connectStage2,
+        connectStage3,
         maintenanceInterval = 500; // ms
 
     onConnectFailure = function () {
         isConnected = false;
         isConnecting = false;
-        console.log('connectfailure');
-        batteryMeterLoop.requestStop();
         onNoConnection();
     };
 
     onConnectSuccess = function () {
         isConnected = true;
         isConnecting = false;
-        console.log('connectsuccess');
-        batteryMeterLoop.requestStart();
         onConnected();
     };
 
+    connectStage3 = function () {
+        batteryMeter.update({
+            onSuccess: onConnectSuccess,
+            onFailure: onConnectFailure
+        });
+    };
+
+    // Bringing date and time after connection up to date seems a good idea.
     connectStage2 = function () {
-        console.log('constage2');
-        // Brings date & time up to date before finishing connection process:
         ptp.setDeviceProperty({
             code: ptp.devicePropCodes.dateTime,
             data: ptp.dataFactory.createWstring(
                 ptp.dateTimeString({date: new Date()})
             ),
-            onSuccess: onConnectSuccess,
+            onSuccess: connectStage3,
             onFailure: onConnectFailure
         });
     };
@@ -46,14 +49,11 @@ define([
         ptp.onNoConnection = onConnectFailure;
         ptp.onConnected = connectStage2;
         ptp.clientName = 'Theta Control';
-        ptp.loggerOutputIsEnabled = true; // TODO
         ptp.connect();
     };
 
     maintainConnection = function () {
-        console.log('maintain');
         if (!isConnecting) {
-            isConnecting = true;
             connectStage1();
         }
         setTimeout(maintainConnection, maintenanceInterval);

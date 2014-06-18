@@ -4,13 +4,13 @@
 
 define([
     'util', 'exposure-settings', 'intervalometer-settings', 'volume-settings',
-    'ptp.js/ptp'
+    'battery-meter', 'ptp.js/ptp'
 ], function (util, exposureSettings, intervalometerSettings, volumeSettings,
-             ptp) {
+             batteryMeter, ptp) {
     'use strict';
 
     var run, capture, captureStage1, captureStage2, captureStage3,
-        onCaptureSuccess, lastShift, lastVolume,
+        captureStage4, onCaptureSuccess, lastShift, lastVolume,
         isRunning = false,
         stopRequested = false,
         requestStart,
@@ -23,7 +23,7 @@ define([
         onCount = util.nop,
         numberOfShots = 0;
 
-    captureStage3 = function (settings) {
+    captureStage4 = function (settings) {
         ptp.capture({
             storageId: 0,
             objectFormatCode: 0,
@@ -37,14 +37,32 @@ define([
         });
     };
 
-    captureStage2 = function (settings) {
+    captureStage3 = function (settings) {
         if (settings.shift === lastShift) {
-            captureStage3(settings);
+            captureStage4(settings);
         } else {
             lastShift = settings.shift;
             ptp.setDeviceProperty({
                 code: ptp.devicePropCodes.exposureBiasCompensation,
                 data: ptp.dataFactory.createWord(settings.shift),
+                onSuccess: function () {
+                    captureStage4(settings);
+                },
+                onFailure: settings.onFailure
+            });
+        }
+    };
+
+    captureStage2 = function (settings) {
+        var volume = volumeSettings.volume;
+
+        if (volume === lastVolume) {
+            captureStage3(settings);
+        } else {
+            lastVolume = volume;
+            ptp.setDeviceProperty({
+                code: 0x502c,
+                data: ptp.dataFactory.createDword(volume),
                 onSuccess: function () {
                     captureStage3(settings);
                 },
@@ -54,20 +72,15 @@ define([
     };
 
     captureStage1 = function (settings) {
-        var volume = volumeSettings.volume;
-
-        if (volume === lastVolume) {
-            captureStage2(settings);
-        } else {
-            lastVolume = volume;
-            ptp.setDeviceProperty({
-                code: 0x502c,
-                data: ptp.dataFactory.createDword(volume),
+        if (batteryMeter.needsUpdate) {
+            batteryMeter.update({
                 onSuccess: function () {
                     captureStage2(settings);
                 },
                 onFailure: settings.onFailure
             });
+        } else {
+            captureStage2(settings);
         }
     };
 
