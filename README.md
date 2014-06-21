@@ -1,8 +1,10 @@
-Introduction
-============
+About
+=====
 
 *Theta Control* is a Firefox OS app for remote controlling the Ricoh Theta 360°
 panorama camera.
+
+It is available on [Firefox Markteplace][4].
 
 
 Development
@@ -74,3 +76,4 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 [1]: http://compass-style.org/
 [2]: http://mimosa-pudica.net/ricoh-theta.html
 [3]: https://github.com/feklee/ptp.js
+[4]: https://marketplace.firefox.com/app/theta-control
