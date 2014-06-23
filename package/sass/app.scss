@@ -29,6 +29,15 @@ a, input {
     @include reset-focus;
 }
 
+@keyframes bounce {
+    from {
+        transform: translateY(0);
+    }
+	to {
+        transform: translateY(-15px);
+    }
+}
+
 body {
     margin: 5px;
     font-family: 'Roboto Condensed', sans-serif;
@@ -51,6 +60,7 @@ body {
         z-index: -1;
         @include transition-property(opacity);
         @include transition-duration($slow);
+        animation: bounce 0.4s ease-out 0s infinite alternate;
     }
 
     &.sufficiently-scrolled::before {
