@@ -28,12 +28,12 @@ define(['util'], function (util) {
 
     util.onceDocumentIsInteractive(function () {
         var inputEl = getInputEl();
-
         inputEl.oninput = updateIndicator;
     });
 
     util.onceDocumentIsComplete(function () {
         maxWidth = parseInt(window.getComputedStyle(getInputEl()).width, 10);
+        updateIndicator();
     });
 
     return Object.create(null, {
