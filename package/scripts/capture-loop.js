@@ -163,17 +163,17 @@ define([
             return;
         }
 
-        if (navigator.requestWakeLock === undefined) {
-            return; // not supported
+        if (navigator.requestWakeLock !== undefined) {
+            lock = navigator.requestWakeLock('wifi');
         }
-
-        lock = navigator.requestWakeLock('wifi');
 
         stopRequested = false;
         run({onStop: function () {
             isRunning = false;
             onStopped();
-            lock.unlock();
+            if (lock !== undefined) {
+                lock.unlock();
+            }
         }});
     };
 
