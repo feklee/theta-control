@@ -120,13 +120,17 @@ define([
     };
 
     onCaptureStarted = function (settings) {
-        setMomentaryStatus('Capturing: ' + formattedExposure(settings.shift));
+        setMomentaryStatus('Capturing ' + formattedExposure(settings.shift));
         updateEnabledState();
+        document.querySelector('.capture.button').classList.
+            add('is-capturing');
     };
 
     onCaptureFinished = function () {
         setMomentaryStatus('');
         setSummaryStatus('Exposures: ' + captureLoop.numberOfShots);
+        document.querySelector('.capture.button').classList.
+            remove('is-capturing');
     };
 
     connection.onNoConnection = function () {

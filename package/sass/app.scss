@@ -33,7 +33,7 @@ a, input {
     from {
         transform: translateY(0);
     }
-	to {
+    to {
         transform: translateY(-15px);
     }
 }
@@ -85,6 +85,17 @@ a {
 
 @keyframes spin {
     to { transform: rotate(1turn); }
+}
+
+@keyframes ellipsis {
+    from {
+        width: 0;
+        margin-right: 0;
+    }
+    to {
+        width: 16px;
+        margin-right: -16px;
+    }
 }
 
 .capture.button {
@@ -151,6 +162,15 @@ a {
             content: ""; // Spinner
             animation: spin 1s infinite steps(8);
         }
+    }
+
+    &.is-capturing > div .momentary.status::after {
+        display: inline-block;
+        overflow: hidden;
+        vertical-align: bottom;
+        text-align: left;
+        animation: ellipsis 1s infinite steps(4);
+        content: "...";
     }
 }
 
