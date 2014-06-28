@@ -172,6 +172,10 @@ a {
         animation: ellipsis 1s infinite steps(4);
         content: "...";
     }
+
+    &.is-capturing > div .momentary.error.status::after {
+        display: none;
+    }
 }
 
 dt {
