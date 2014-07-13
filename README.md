@@ -17,6 +17,8 @@ Requirements
 
   * [ptp.js][3]: JavaScript PTP/IP library in version 1.0.0 or compatible
 
+  * [Node.js][5]: To create `package.zip` for distribution.
+
 Known issues
 ------------
 
@@ -77,3 +79,4 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 [2]: http://mimosa-pudica.net/ricoh-theta.html
 [3]: https://github.com/feklee/ptp.js
 [4]: https://marketplace.firefox.com/app/theta-control
+[5]: http://en.wikipedia.org/wiki/Node.js

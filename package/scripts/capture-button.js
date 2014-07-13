@@ -10,7 +10,7 @@ define([
     var setStatus, start, onStopRequested, onStopped, onCaptureStarted,
         onCount, setMomentaryStatus, setSummaryStatus, formattedSeconds,
         onCaptureFinished, onIntervalometerSettingsChanged,
-        formattedExposure, updateEnabledState,
+        formattedExposure, updateEnabledState, setNoConnectionStatus,
         isDisabled = false,
         onClicked,
         type,
@@ -85,6 +85,9 @@ define([
 
     onStopped = function () {
         setType('start');
+        if (!connection.isConnected) {
+            setNoConnectionStatus();
+        }
         updateEnabledState();
     };
 
@@ -133,12 +136,16 @@ define([
             remove('is-capturing');
     };
 
-    connection.onNoConnection = function () {
+    setNoConnectionStatus = function () {
         setStatus({
             type: 'momentary',
             msg: 'No connection to Theta',
             isError: true
         });
+    };
+
+    connection.onNoConnection = function () {
+        setNoConnectionStatus();
         captureLoop.requestStop();
     };
 

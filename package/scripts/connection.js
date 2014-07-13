@@ -54,7 +54,10 @@ define([
 
     maintainConnection = function () {
         if (!isConnecting) {
-            connectStage1();
+            if (!ptp.isConnected) {
+                isConnecting = true;
+                connectStage1();
+            }
         }
         setTimeout(maintainConnection, maintenanceInterval);
     };
