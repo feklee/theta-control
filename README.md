@@ -15,7 +15,7 @@ Requirements
 
   * [Compass][1]: The CSS is compiled from SCSS.
 
-  * [ptp.js][3]: JavaScript PTP/IP library in version 1.0.0 or compatible
+  * [ptp.js][3]: JavaScript PTP/IP library in version 1
 
   * [Node.js][5]: To create `package.zip` for distribution.
 

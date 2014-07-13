@@ -150,6 +150,7 @@ define([
     };
 
     connection.onConnected = function () {
+        console.log('connected');
         setMomentaryStatus(''); // clears potential no connection error
     };
 
