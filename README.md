@@ -19,28 +19,6 @@ Requirements
 
   * [Node.js][5]: To create `package.zip` for distribution.
 
-Known issues
-------------
-
-  * When controlled from a Keon with Firefox OS 1.3 or possibly certain versions
-    thereof, then obtaining battery level while capture sometimes or always fails:
-
-     1. `initiateCapture` is sent (PTP/IP packet type 6).
-
-     2. Immediately afterwards, for obtaining the battery level,
-        `getDevicePropValue` is sent (PTP/IP packet type 6).
-
-     3. There never is a response (PTP/IP packet type 7) for the command sent
-        in step 1.
-
-    Whether this is an issue with `ptp.js`, with `TCPSocket`, or with the Theta
-    needs research.
-
-  * When connecting to the Theta from a ThinkPad T420si / Windows 7 / Firefox
-    31.0 / Simulator 1.3, then the TCP socket often closes when querying
-    battery level. This does not happen when connecting from a Keon / Firefox
-    OS 1.3.
-
 Reading
 -------
 
