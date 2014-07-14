@@ -19,6 +19,21 @@ Requirements
 
   * [Node.js][5]: To create `package.zip` for distribution.
 
+Coding conventions
+------------------
+
+  * Code needs to validate with JSLint.
+
+  * Comments are in Markdown.
+
+  * Don’t use constructors: JavaScript is a classless language.
+
+  * Don’t throw exceptions. JavaScript is a weakly typed language, allowing
+    functions to return different types of values, including types indicating
+    errors.
+
+  * Versioning: major.minor.bug-fix
+
 Reading
 -------
 
