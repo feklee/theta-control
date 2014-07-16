@@ -11,6 +11,7 @@ define([
         onCount, setMomentaryStatus, setSummaryStatus, formattedSeconds,
         onCaptureFinished, onIntervalometerSettingsChanged,
         formattedExposure, updateEnabledState, setNoConnectionStatus,
+        onWindowResized,
         isDisabled = false,
         onClicked,
         type,
@@ -174,6 +175,7 @@ define([
     util.onceDocumentIsInteractive(function () {
         document.querySelector('.capture.button').onclick = onClicked;
         setType('start');
+        window.addEventListener('resize', window.setCaptureButtonHeight);
         updateEnabledState();
     });
 });
