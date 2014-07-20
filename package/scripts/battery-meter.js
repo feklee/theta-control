@@ -8,8 +8,8 @@ define(['ptp.js/ptp'], function (ptp) {
     var update, setClassName, needsUpdate, timeOfLastUpdate,
         lifeTime = 60000; // ms
 
-    setClassName = function (settings) {
-        var level = settings.dataPacket.getWord(0),
+    setClassName = function (options) {
+        var level = options.dataPacket.getWord(0),
             el = document.querySelector('dd.battery-meter');
 
         // Theta only returns a few discrete values (firmware v1.30):
@@ -28,15 +28,15 @@ define(['ptp.js/ptp'], function (ptp) {
     // simultaneously, since the Theta seems to have problems processing
     // concurrent PTP/IP commands. (After the latest update of ptp.js, this
     // assertion could be re-evaluated.)
-    update = function (settings) {
+    update = function (options) {
         ptp.getDeviceProperty({
             code: ptp.devicePropCodes.batteryLevel,
-            onSuccess: function (settings2) {
-                setClassName(settings2);
-                settings.onSuccess();
+            onSuccess: function (options2) {
+                setClassName(options2);
+                options.onSuccess();
                 timeOfLastUpdate = new Date().getTime(); // ms
             },
-            onFailure: settings.onFailure
+            onFailure: options.onFailure
         });
     };
 

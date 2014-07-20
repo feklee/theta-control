@@ -26,18 +26,18 @@ define(function () {
                 documentIsComplete());
     };
 
-    // Counts down from `settings.from` ms to zero calling `settings.onCount`
-    // for every count, and in the end: `settings.onZero`. Once the
-    // `settings.interruptRequested` function returns true, then the countdown
-    // stops, calling `settings.onInterrupt`.
-    countdown = function (settings, startTime) {
+    // Counts down from `options.from` ms to zero calling `options.onCount` for
+    // every count, and in the end: `options.onZero`. Once the
+    // `options.interruptRequested` function returns true, then the countdown
+    // stops, calling `options.onInterrupt`.
+    countdown = function (options, startTime) {
         var increment = 100, // ms
             elapsedTime, // ms
             currentTime = new Date().getTime(); // ms
 
-        if (settings.interruptRequested()) {
-            settings.onCount(0);
-            settings.onInterrupt();
+        if (options.interruptRequested()) {
+            options.onCount(0);
+            options.onInterrupt();
             return;
         }
 
@@ -47,13 +47,13 @@ define(function () {
 
         elapsedTime = currentTime - startTime;
 
-        if (elapsedTime >= settings.from) {
-            settings.onCount(0);
-            settings.onZero();
+        if (elapsedTime >= options.from) {
+            options.onCount(0);
+            options.onZero();
         } else {
-            settings.onCount(settings.from - elapsedTime);
+            options.onCount(options.from - elapsedTime);
             setTimeout(function () {
-                countdown(settings, startTime);
+                countdown(options, startTime);
             }, increment);
         }
     };

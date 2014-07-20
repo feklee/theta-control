@@ -11,7 +11,6 @@ define([
         onCount, setMomentaryStatus, setSummaryStatus, formattedSeconds,
         onCaptureFinished, onIntervalometerSettingsChanged,
         formattedExposure, updateEnabledState, setNoConnectionStatus,
-        onWindowResized,
         isDisabled = false,
         onClicked,
         type,
@@ -123,8 +122,8 @@ define([
             labels[type];
     };
 
-    onCaptureStarted = function (settings) {
-        setMomentaryStatus('Capturing ' + formattedExposure(settings.shift));
+    onCaptureStarted = function (options) {
+        setMomentaryStatus('Capturing ' + formattedExposure(options.shift));
         updateEnabledState();
         document.querySelector('.capture.button').classList.
             add('is-capturing');
@@ -151,7 +150,6 @@ define([
     };
 
     connection.onConnected = function () {
-        console.log('connected');
         setMomentaryStatus(''); // clears potential no connection error
     };
 

@@ -23,96 +23,96 @@ define([
         onCount = util.nop,
         numberOfShots = 0;
 
-    captureStage4 = function (settings) {
+    captureStage4 = function (options) {
         ptp.capture({
             storageId: 0,
             objectFormatCode: 0,
             onSuccess: function () {
                 numberOfShots += 1;
-                settings.onSuccess();
+                options.onSuccess();
             },
             onFailure: function () {
-                settings.onFailure();
+                options.onFailure();
             }
         });
     };
 
-    captureStage3 = function (settings) {
-        if (settings.shift === lastShift) {
-            captureStage4(settings);
+    captureStage3 = function (options) {
+        if (options.shift === lastShift) {
+            captureStage4(options);
         } else {
-            lastShift = settings.shift;
+            lastShift = options.shift;
             ptp.setDeviceProperty({
                 code: ptp.devicePropCodes.exposureBiasCompensation,
-                data: ptp.dataFactory.createWord(settings.shift),
+                data: ptp.dataFactory.createWord(options.shift),
                 onSuccess: function () {
-                    captureStage4(settings);
+                    captureStage4(options);
                 },
-                onFailure: settings.onFailure
+                onFailure: options.onFailure
             });
         }
     };
 
-    captureStage2 = function (settings) {
+    captureStage2 = function (options) {
         var volume = volumeSettings.volume;
 
         if (volume === lastVolume) {
-            captureStage3(settings);
+            captureStage3(options);
         } else {
             lastVolume = volume;
             ptp.setDeviceProperty({
                 code: 0x502c,
                 data: ptp.dataFactory.createDword(volume),
                 onSuccess: function () {
-                    captureStage3(settings);
+                    captureStage3(options);
                 },
-                onFailure: settings.onFailure
+                onFailure: options.onFailure
             });
         }
     };
 
-    captureStage1 = function (settings) {
+    captureStage1 = function (options) {
         if (batteryMeter.needsUpdate) {
             batteryMeter.update({
                 onSuccess: function () {
-                    captureStage2(settings);
+                    captureStage2(options);
                 },
-                onFailure: settings.onFailure
+                onFailure: options.onFailure
             });
         } else {
-            captureStage2(settings);
+            captureStage2(options);
         }
     };
 
-    capture = function (settings) {
+    capture = function (options) {
         onCaptureStarted({
-            shift: settings.shift
+            shift: options.shift
         });
 
         captureStage1({
-            shift: settings.shift,
+            shift: options.shift,
             onSuccess: function () {
                 onCaptureFinished();
-                settings.onSuccess();
+                options.onSuccess();
             },
             onFailure: function () {
                 onCaptureFinished();
-                settings.onFailure();
+                options.onFailure();
             }
         });
     };
 
-    onCaptureSuccess = function (settings) {
-        var delay, bracketingIsDone = settings.shifts.length === 0;
+    onCaptureSuccess = function (options) {
+        var delay, bracketingIsDone = options.shifts.length === 0;
 
         if (stopRequested) {
-            settings.onStop();
+            options.onStop();
             return;
         }
 
         if (bracketingIsDone) {
             if (!intervalometerSettings.isEnabled) {
-                settings.onStop();
+                options.onStop();
                 return;
             }
             delay = 1000 * intervalometerSettings.delay;
@@ -124,34 +124,34 @@ define([
             from: delay,
             onCount: onCount,
             onZero: function () {
-                run(settings);
+                run(options);
             },
             interruptRequested: function () {
                 return stopRequested;
             },
-            onInterrupt: settings.onStop
+            onInterrupt: options.onStop
         });
     };
 
-    run = function (settings) {
+    run = function (options) {
         var shift;
 
         isRunning = true;
-        if (settings.shifts === undefined || settings.shifts.length === 0) {
-            settings.shifts = exposureSettings.selectedShifts;
+        if (options.shifts === undefined || options.shifts.length === 0) {
+            options.shifts = exposureSettings.selectedShifts;
         }
 
-        shift = settings.shifts.shift();
-        capturingLastBracketingShot = (settings.shifts.length === 0);
+        shift = options.shifts.shift();
+        capturingLastBracketingShot = (options.shifts.length === 0);
         capture({
             shift: shift,
             onSuccess: function () {
                 capturingLastBracketingShot = false;
-                onCaptureSuccess(settings);
+                onCaptureSuccess(options);
             },
             onFailure: function () {
                 capturingLastBracketingShot = false;
-                settings.onStop();
+                options.onStop();
             }
         });
     };

@@ -45,7 +45,7 @@ define([
     };
 
     connectStage1 = function () {
-        ptp.ip = '192.168.1.1';
+        ptp.host = '192.168.1.1';
         ptp.onNoConnection = onConnectFailure;
         ptp.onConnected = connectStage2;
         ptp.clientName = 'Theta Control';
