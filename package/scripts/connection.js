@@ -14,18 +14,21 @@ define([
         maintenanceInterval = 500; // ms
 
     onConnectFailure = function () {
+        console.log('connect failure');
         isConnected = false;
         isConnecting = false;
         onNoConnection();
     };
 
     onConnectSuccess = function () {
+        console.log('connect success');
         isConnected = true;
         isConnecting = false;
         onConnected();
     };
 
     connectStage3 = function () {
+        console.log('connect stage 3');
         batteryMeter.update({
             onSuccess: onConnectSuccess,
             onFailure: onConnectFailure
@@ -34,6 +37,7 @@ define([
 
     // Bringing date and time after connection up to date seems a good idea.
     connectStage2 = function () {
+        console.log('connect stage 2');
         ptp.setDeviceProperty({
             code: ptp.devicePropCodes.dateTime,
             data: ptp.dataFactory.createWstring(
@@ -45,8 +49,10 @@ define([
     };
 
     connectStage1 = function () {
+        console.log('connect stage 1');
+        ptp.loggerOutputIsEnabled = true; // TODO: remove
         ptp.host = '192.168.1.1';
-        ptp.onNoConnection = onConnectFailure;
+        ptp.onDisconnected = onConnectFailure;
         ptp.onConnected = connectStage2;
         ptp.clientName = 'Theta Control';
         ptp.connect();

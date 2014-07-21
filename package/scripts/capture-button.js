@@ -174,6 +174,9 @@ define([
         document.querySelector('.capture.button').onclick = onClicked;
         setType('start');
         window.addEventListener('resize', window.setCaptureButtonHeight);
+        if (!connection.isConnected) {
+            setNoConnectionStatus();
+        }
         updateEnabledState();
     });
 });
