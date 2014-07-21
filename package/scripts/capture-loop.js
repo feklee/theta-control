@@ -9,19 +9,35 @@ define([
              batteryMeter, ptp) {
     'use strict';
 
-    var run, capture, captureStage1, captureStage2, captureStage3,
-        captureStage4, onCaptureSuccess, lastShift, lastVolume,
+    var run, capture, captureStage1, captureStage2, captureStage3, onStop,
+        captureStage4, onCaptureSuccess, lastShift, lastVolume, lock,
         isRunning = false,
         stopRequested = false,
         requestStart,
         requestStop,
         capturingLastBracketingShot = false,
+        resetExposureBiasCompensation,
         onStopRequested = util.nop,
         onStopped = util.nop,
         onCaptureStarted = util.nop,
         onCaptureFinished = util.nop,
         onCount = util.nop,
         numberOfShots = 0;
+
+    resetExposureBiasCompensation = function (onDone) {
+        var shift = 0;
+
+        if (lastShift === shift) {
+            return;
+        }
+
+        ptp.setDeviceProperty({
+            code: ptp.devicePropCodes.exposureBiasCompensation,
+            data: ptp.dataFactory.createWord(shift),
+            onSuccess: onDone,
+            onFailure: onDone
+        });
+    };
 
     captureStage4 = function (options) {
         ptp.capture({
@@ -156,9 +172,17 @@ define([
         });
     };
 
-    requestStart = function () {
-        var lock;
+    onStop = function () {
+        isRunning = false;
+        resetExposureBiasCompensation(function () {
+            if (lock !== undefined) {
+                lock.unlock();
+            }
+            onStopped();
+        });
+    };
 
+    requestStart = function () {
         if (isRunning) {
             return;
         }
@@ -167,14 +191,9 @@ define([
             lock = navigator.requestWakeLock('wifi');
         }
 
+        lastShift = undefined; // it's unknown what happened since last run
         stopRequested = false;
-        run({onStop: function () {
-            isRunning = false;
-            onStopped();
-            if (lock !== undefined) {
-                lock.unlock();
-            }
-        }});
+        run({onStop: onStop});
     };
 
     requestStop = function () {

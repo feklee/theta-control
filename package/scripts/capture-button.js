@@ -10,7 +10,7 @@ define([
     var setStatus, start, onStopRequested, onStopped, onCaptureStarted,
         onCount, setMomentaryStatus, setSummaryStatus, formattedSeconds,
         onCaptureFinished, onIntervalometerSettingsChanged,
-        formattedExposure, updateEnabledState, setNoConnectionStatus,
+        formattedExposure, updateEnabledState, updateNoConnectionStatus,
         isDisabled = false,
         onClicked,
         type,
@@ -85,9 +85,7 @@ define([
 
     onStopped = function () {
         setType('start');
-        if (!connection.isConnected) {
-            setNoConnectionStatus();
-        }
+        updateNoConnectionStatus();
         updateEnabledState();
     };
 
@@ -136,21 +134,23 @@ define([
             remove('is-capturing');
     };
 
-    setNoConnectionStatus = function () {
-        setStatus({
-            type: 'momentary',
-            msg: 'No connection to Theta',
-            isError: true
-        });
+    updateNoConnectionStatus = function () {
+        if (!connection.isConnected) {
+            setStatus({
+                type: 'momentary',
+                msg: 'No connection to Theta',
+                isError: true
+            });
+        } // else: no change
     };
 
     connection.onNoConnection = function () {
-        setNoConnectionStatus();
+        updateNoConnectionStatus();
         captureLoop.requestStop();
     };
 
     connection.onConnected = function () {
-        setMomentaryStatus(''); // clears potential no connection error
+        setMomentaryStatus(''); // clears potential "no connection" error
     };
 
     onCount = function (remainingTime) {
@@ -174,9 +174,7 @@ define([
         document.querySelector('.capture.button').onclick = onClicked;
         setType('start');
         window.addEventListener('resize', window.setCaptureButtonHeight);
-        if (!connection.isConnected) {
-            setNoConnectionStatus();
-        }
+        updateNoConnectionStatus();
         updateEnabledState();
     });
 });
