@@ -201,6 +201,7 @@ define([
             stopRequested = true;
             onStopRequested();
         } else {
+            // may be superfluous
             onStopRequested();
             onStopped();
         }
