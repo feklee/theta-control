@@ -9,5 +9,10 @@
         el.style.height = (window.innerHeight - 12) + 'px';
     };
 
-    window.setCaptureButtonHeight();
+    window.setCaptureButtonHeight(); // on Firefox 32.0 / Android 4.2 this
+                                     // fails because Firefox doesn't report
+                                     // the correct window height when loading
+                                     // => call again when document is loaded
+
+    window.addEventListener('load', window.setCaptureButtonHeight, false);
 }());
