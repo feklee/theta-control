@@ -28,6 +28,7 @@ define([
         var shift = 0;
 
         if (lastShift === shift) {
+            onDone();
             return;
         }
 
