@@ -47,7 +47,7 @@ define([
         ptp.onDisconnected = onConnectFailure;
         ptp.onConnected = connectStage2;
         ptp.clientName = 'Theta Control';
-        ptp.connect();
+        ptp.connect(); // tolerates being called in quick succession
     };
 
     maintainConnection = function () {
