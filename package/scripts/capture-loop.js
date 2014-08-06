@@ -4,9 +4,9 @@
 
 define([
     'util', 'exposure-settings', 'intervalometer-settings', 'volume-settings',
-    'battery-meter', 'ptp.js/ptp'
+    'battery-meter', 'reset', 'ptp.js/ptp'
 ], function (util, exposureSettings, intervalometerSettings, volumeSettings,
-             batteryMeter, ptp) {
+             batteryMeter, reset, ptp) {
     'use strict';
 
     var run, capture, captureStage1, captureStage2, captureStage3, onStop,
@@ -16,29 +16,12 @@ define([
         requestStart,
         requestStop,
         capturingLastBracketingShot = false,
-        resetExposureBiasCompensation,
         onStopRequested = util.nop,
         onStopped = util.nop,
         onCaptureStarted = util.nop,
         onCaptureFinished = util.nop,
         onCount = util.nop,
         numberOfShots = 0;
-
-    resetExposureBiasCompensation = function (onDone) {
-        var shift = 0;
-
-        if (lastShift === shift) {
-            onDone();
-            return;
-        }
-
-        ptp.setDeviceProperty({
-            code: ptp.devicePropCodes.exposureBiasCompensation,
-            data: ptp.dataFactory.createWord(shift),
-            onSuccess: onDone,
-            onFailure: onDone
-        });
-    };
 
     captureStage4 = function (options) {
         ptp.capture({
@@ -175,7 +158,7 @@ define([
 
     onStop = function () {
         isRunning = false;
-        resetExposureBiasCompensation(function () {
+        reset(function () {
             if (lock !== undefined) {
                 lock.unlock();
             }
@@ -192,7 +175,10 @@ define([
             lock = navigator.requestWakeLock('wifi');
         }
 
-        lastShift = undefined; // it's unknown what happened since last run
+        // it's unknown what happened since last run => start with undefined:
+        lastShift = undefined;
+        lastVolume = undefined;
+
         stopRequested = false;
         run({onStop: onStop});
     };
