@@ -40,6 +40,13 @@ Reading
 Yasuhiro Fujii’s article [“Play with Ricoh THETA w/o Smartphones”][2] lists
 commands and device properties that can be accessed by PTP/IP.
 
+How to prepare package for uploading to Firefox Marketplace
+-----------------------------------------------------------
+
+Run with Node.js:
+
+    package-zip-creator/app.js
+
 
 License
 =======
