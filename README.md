@@ -34,7 +34,22 @@ Coding conventions
     functions to return different types of values, including types indicating
     errors.
 
-  * Versioning: major.minor.bug-fix
+  * Versioning: [major.minor.patch][6]
+
+Publishing a new version
+------------------------
+
+  * Keep version up to date in:
+
+      + Git tags
+
+      + `package/manifest.webapp`
+
+  * Publish to:
+
+      + [github.com/feklee/theta-control][7]
+
+      + Firefox Marketplace: [Theta Control][8]
 
 Reading
 -------
@@ -45,9 +60,11 @@ commands and device properties that can be accessed by PTP/IP.
 How to prepare package for uploading to Firefox Marketplace
 -----------------------------------------------------------
 
-Run with Node.js:
+Run:
 
-    package-zip-creator/app.js
+    $ cd package-zip-creator
+    $ npm update
+    $ node app
 
 
 License
@@ -82,3 +99,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 [3]: https://github.com/feklee/ptp.js
 [4]: https://marketplace.firefox.com/app/theta-control
 [5]: http://en.wikipedia.org/wiki/Node.js
+[6]: http://semver.org/
+[7]: https://github.com/feklee/theta-control
+[8]: https://marketplace.firefox.com/app/theta-control
