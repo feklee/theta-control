@@ -39,13 +39,26 @@ Coding conventions
 Publishing a new version
 ------------------------
 
-  * Keep version up to date in:
+ 1. Install dependencies, if needed.
+
+ 2. Refresh CSS:
+
+        $ cd package
+        $ compass compile
+
+ 3. Keep version up to date in:
 
       + Git tags
 
       + `package/manifest.webapp`
 
-  * Publish to:
+ 4. Create package:
+
+        $ cd package-zip-creator
+        $ npm update
+        $ node app
+
+ 5. Publish to:
 
       + [github.com/feklee/theta-control][7]
 
@@ -56,15 +69,6 @@ Reading
 
 Yasuhiro Fujii’s article [“Play with Ricoh THETA w/o Smartphones”][2] lists
 commands and device properties that can be accessed by PTP/IP.
-
-How to prepare package for uploading to Firefox Marketplace
------------------------------------------------------------
-
-Run:
-
-    $ cd package-zip-creator
-    $ npm update
-    $ node app
 
 
 License
