@@ -17,6 +17,7 @@ define([
         labels,
         disable,
         enable,
+        onKeyDown,
         setType;
 
     labels = { // by type
@@ -163,6 +164,13 @@ define([
         updateEnabledState();
     };
 
+    onKeyDown = function (e) {
+        if (e.key === 'VolumeUp') {
+            onClicked();
+        }
+        e.preventDefault();
+    };
+
     intervalometerSettings.onChanged = onIntervalometerSettingsChanged;
     captureLoop.onStopRequested = onStopRequested;
     captureLoop.onStopped = onStopped;
@@ -172,6 +180,7 @@ define([
 
     util.onceDocumentIsInteractive(function () {
         document.querySelector('.capture.button').onclick = onClicked;
+        window.addEventListener('keydown', onKeyDown);
         setType('start');
         window.addEventListener('resize', window.setCaptureButtonHeight);
         updateNoConnectionStatus();
