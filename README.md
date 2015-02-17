@@ -6,9 +6,6 @@ panorama camera.
 
 It is available on [Firefox Markteplace][4].
 
-Hidden feature: The capture button can be triggered by pressing the volume-down
-button on the device running the app.
-
 
 Development
 ===========
