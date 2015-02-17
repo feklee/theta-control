@@ -165,7 +165,7 @@ define([
     };
 
     onKeyDown = function (e) {
-        if (e.key === 'VolumeUp') {
+        if (e.key === 'VolumeUp' || e.key === 'VolumeDown') {
             onClicked();
             e.preventDefault();
         }
