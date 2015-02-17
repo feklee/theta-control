@@ -167,8 +167,8 @@ define([
     onKeyDown = function (e) {
         if (e.key === 'VolumeUp') {
             onClicked();
+            e.preventDefault();
         }
-        e.preventDefault();
     };
 
     intervalometerSettings.onChanged = onIntervalometerSettingsChanged;
