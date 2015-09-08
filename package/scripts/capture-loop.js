@@ -9,8 +9,9 @@ define([
              batteryMeter, reset, ptp) {
     'use strict';
 
-    var run, capture, captureStage1, captureStage2, captureStage3, onStop,
-        captureStage4, onCaptureSuccess, lastShift, lastVolume, lock,
+    var run, capture, captureStage1, captureStage2, captureStage3,
+        captureStage4, captureStage5, onStop, onCaptureSuccess, lastShift,
+        lastVolume, lock,
         isRunning = false,
         stopRequested = false,
         requestStart,
@@ -23,7 +24,7 @@ define([
         onCount = util.nop,
         numberOfShots = 0;
 
-    captureStage4 = function (options) {
+    captureStage5 = function (options) {
         ptp.capture({
             storageId: 0,
             objectFormatCode: 0,
@@ -37,7 +38,7 @@ define([
         });
     };
 
-    captureStage3 = function (options) {
+    captureStage4 = function (options) {
         if (options.shift === lastShift) {
             captureStage4(options);
         } else {
@@ -46,11 +47,22 @@ define([
                 code: ptp.devicePropCodes.exposureBiasCompensation,
                 data: ptp.dataFactory.createWord(options.shift),
                 onSuccess: function () {
-                    captureStage4(options);
+                    captureStage5(options);
                 },
                 onFailure: options.onFailure
             });
         }
+    };
+
+    captureStage3 = function (options) {
+        ptp.setDeviceProperty({
+            code: 0x500f,
+            data: ptp.dataFactory.createWord(100), // TODO: make selectable
+            onSuccess: function () {
+                captureStage4(options);
+            },
+            onFailure: options.onFailure
+        });
     };
 
     captureStage2 = function (options) {
